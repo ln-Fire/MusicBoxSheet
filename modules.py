@@ -64,7 +64,7 @@ def normalization(image, staves, standard):
     new_width = int(width * weight)  # 이미지의 넓이에 가중치를 곱해줌
     new_height = int(height * weight)  # 이미지의 높이에 가중치를 곱해줌
 
-    image = cv2.resize(image, (new_width, new_height))  # 이미지 리사이징
+    image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_CUBIC)  # 이미지 리사이징 - interpolation CUBIC으로 사용
     ret, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)  # 이미지 이진화
     staves = [x * weight for x in staves]  # 오선 좌표에도 가중치를 곱해줌
 
@@ -137,7 +137,7 @@ def recognition(image, staves, objects):
                 rest = rs.recognize_rest(image, staff, stats)
                 if rest:
                     beats.append(rest)
-                    pitches.append(-1)
+                    pitches.append(0)
                 else:
                     whole_note, pitch = rs.recognize_whole_note(image, staff, stats)
                     if whole_note:

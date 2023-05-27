@@ -32,14 +32,12 @@ image_6, key, beats, pitches = modules.recognition(image_5, staves, objects)
 # cv2.imshow('image0', image_0)
 # cv2.imshow('image1', image_1)
 # cv2.imshow('image2', image_2)
-print(staves)
 cv2.imshow('image3', image_3)
 cv2.imshow('image4', image_4)
 print(objects)
 cv2.imshow('image5', image_5)
 cv2.imshow('image6', image_6)
-print(pitches)   # 음정 반환
-print(beats)    # 박자 반환
+print(pitches, beats)   # 음정 반환, 박자 반환
 cv2.imwrite('result.png', image_5)
 
 k = cv2.waitKey(0)
