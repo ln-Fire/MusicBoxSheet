@@ -1,32 +1,47 @@
 # Main.py
 import cv2
+import os
 import numpy as np
+import functions as fs
+import modules
 
-# 이미지 불러오기, 절대 경로
-image_0 = cv2.imread("/Users/wonjunjo/Desktop/vscode/opencv_work/MusicBoxSheet/plane.png")
-
-# 이미지 이진화
-def threshold(image):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    ret, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
-    return image
+# 이미지 불러오기
+resource_path = os.getcwd()
+image_0 = cv2.imread(resource_path + "/test/test.png")
 
 # 1. 보표 영역 추출 및 그 외 노이즈 제거
-def remove_nosie(image):
-    image = threshold(image)    # 이미지 이진화
-    mask = np.zeros(image.shape, np.uint8)  # 보표 영역만 추출하기 위해 마스크 생성
-    cnt, labels, stats, centroids = cv2.connectedComponentsWithStats(image) # 이미지 레이블링
-    for i in range(1, cnt): # 배경을 제외
-        x, y, w, h, area = stats[i] # x, y 좌측 상단 좌표, area: 면적, 픽셀 수
-        if w > image.shape[1] * 0.5:  # 보표 영역에만
-            cv2.rectangle(mask, (x, y, w, h), (255, 0, 0), -1)  # 사각형 그리기
-            
-    masked_image = cv2.bitwise_and(image, mask)  # 보표 영역만 추출
-    cv2.imshow('masked_image', masked_image)
-    return masked_image
-        
-image_1 = remove_nosie(image_0)
+image_1 = modules.remove_noise(image_0)
+
+# 2. 오선 제거
+image_2, staves = modules.remove_staves(image_1)
+
+# 3. 악보 이미지 정규화
+# standard의 값에 따라 가중치가 달라짐
+image_3, staves = modules.normalization(image_2, staves, 10)
+
+# 4. 객체 검출 과정 
+image_4, objects = modules.object_detection(image_3, staves)
+
+# 5. 객체 분석 과정
+image_5, objects = modules.object_analysis(image_4, objects)
+
+# 6. 인식 과정
+image_6, key, beats, pitches = modules.recognition(image_5, staves, objects)
 
 # 이미지 띄우기
-cv2.imshow('image', image_1)
-cv2.waitKey(0)
+# cv2.imshow('image0', image_0)
+# cv2.imshow('image1', image_1)
+# cv2.imshow('image2', image_2)
+print(staves)
+cv2.imshow('image3', image_3)
+cv2.imshow('image4', image_4)
+print(objects)
+cv2.imshow('image5', image_5)
+cv2.imshow('image6', image_6)
+print(pitches)   # 음정 반환
+print(beats)    # 박자 반환
+cv2.imwrite('result.png', image_5)
+
+k = cv2.waitKey(0)
+if k == 27:
+    cv2.destroyAllWindows()
