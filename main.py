@@ -4,6 +4,7 @@ import os
 import numpy as np
 import functions as fs
 import modules
+import musicbox_score as ms
 
 # 이미지 불러오기
 resource_path = os.getcwd()
@@ -28,6 +29,9 @@ image_5, objects = modules.object_analysis(image_4, objects)
 # 6. 인식 과정
 image_6, key, beats, pitches = modules.recognition(image_5, staves, objects)
 
+# 오르골 악보 만들기
+music_box_sheet = ms.musicbox_score(pitches, beats)
+
 # 이미지 띄우기
 # cv2.imshow('image0', image_0)
 # cv2.imshow('image1', image_1)
@@ -39,6 +43,8 @@ cv2.imshow('image5', image_5)
 cv2.imshow('image6', image_6)
 print(pitches, beats)   # 음정 반환, 박자 반환
 cv2.imwrite('result.png', image_5)
+cv2.imshow('music box', music_box_sheet)
+cv2.imwrite('musicboxresult.png', music_box_sheet)
 
 k = cv2.waitKey(0)
 if k == 27:
