@@ -8,11 +8,11 @@ def threshold(image):
     return image
 
 def weighted(value):
-    standard = 20
+    standard = 10
     return int(value * (standard / 10))
 
 def closing(image):
-    kernel = np.ones((weighted(5), weighted(5)), np.uint8)
+    kernel = np.ones((weighted(3), weighted(3)), np.uint8)
     image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
     return image
 
