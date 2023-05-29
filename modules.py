@@ -64,7 +64,7 @@ def normalization(image, staves, standard):
     new_width = int(width * weight)  # 이미지의 넓이에 가중치를 곱해줌
     new_height = int(height * weight)  # 이미지의 높이에 가중치를 곱해줌
 
-    image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_CUBIC)  # 이미지 리사이징
+    image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_CUBIC)  # 이미지 리사이징 - interpolation CUBIC으로 사용
     ret, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)  # 이미지 이진화
     staves = [x * weight for x in staves]  # 오선 좌표에도 가중치를 곱해줌
 
@@ -73,6 +73,9 @@ def normalization(image, staves, standard):
 # def object_detection(image, staves):
 #     lines = int(len(staves) / 5)  # 보표의 개수
 #     objects = []  # 구성요소 정보가 저장될 리스트
+
+
+
 
 #     # cnt, labels, stats, centroids = cv2.connectedComponentsWithStats(image)  # 모든 객체 검출하기
 #     # for i in range(1, cnt):
@@ -87,6 +90,7 @@ def normalization(image, staves, standard):
 
 #     closing_image = fs.closing(image)
 #     #cv2.imshow("closing", image)
+
 #     cnt, labels, stats, centroids = cv2.connectedComponentsWithStats(closing_image)  # 모든 객체 검출하기
 #     for i in range(1, cnt):
 #         (x, y, w, h, area) = stats[i]
@@ -129,8 +133,6 @@ def object_detection(image, staves):
                     elif h >= fs.weighted(28) and h <= fs.weighted(32) and w == fs.weighted(9):
                         objects.append([line, (x, y, w, h, area)])  # 조표 샵인 경우 추가
 
-                    
-
     # closing 연산 수행하기
     closing_image = fs.closing(image)
     #cv2.imwrite('closing.png', closing_image)
@@ -143,7 +145,11 @@ def object_detection(image, staves):
                 area_top = staves[line * 5] - fs.weighted(20)  # 위치 조건 (상단)
                 area_bot = staves[(line + 1) * 5 - 1] + fs.weighted(20)  # 위치 조건 (하단)
                 if area_top <= center <= area_bot:
-                    if not (h >= fs.weighted(26) and h <= fs.weighted(28) and w >= fs.weighted(7) and w <= fs.weighted(8)) and not (h == fs.weighted(48) and w == fs.weighted(17)) and not (h >= fs.weighted(28) and h <= fs.weighted(32) and w == fs.weighted(9)) and not (w == fs.weighted(30) and h >= fs.weighted(49) and h <= fs.weighted(50)):               
+                    if not (h >= fs.weighted(26) and h <= fs.weighted(28) and w >= fs.weighted(7) \
+                            and w <= fs.weighted(8)) and not (h == fs.weighted(48) and w == fs.weighted(17)) \
+                            and not (h >= fs.weighted(28) and h <= fs.weighted(32) and w == fs.weighted(9)) \
+                            and not (w == fs.weighted(30) and h >= fs.weighted(49) and h <= fs.weighted(50)):               
+
                         objects.append([line, (x, y, w, h, area)])  # 조표 이미 추가 했으니 추가 x
     objects.sort()  # 보표 번호 → x 좌표 순으로 오름차순 정렬
 
@@ -165,6 +171,7 @@ def object_analysis(image, objects):
 
     return image, objects
 
+
 def recognition(image, staves, objects):
     key = 0
     time_signature = False
@@ -179,31 +186,34 @@ def recognition(image, staves, objects):
         direction = obj[3]
         (x, y, w, h, area) = stats
         staff = staves[line * 5: (line + 1) * 5]
-        # if not time_signature:  # 조표가 완전히 탐색되지 않음 (아직 박자표를 찾지 못함)
-        #     ts, temp_key = rs.recognize_key(image, staff, stats)
-        #     time_signature = ts
-        #     key += temp_key
-        #     # if time_signature:
-        #     #     #fs.put_text(image, key, (x, y + h + fs.weighted(30)))
-        # else:  # 조표가 완전히 탐색되었음
-        notes = rs.recognize_note(image, staff, stats, stems, direction)
-        if len(notes[0]):
-            for beat in notes[0]:
-                beats.append(beat)
-            for pitch in notes[1]:
-                pitches.append(pitch)
-        else:
-            rest = rs.recognize_rest(image, staff, stats)
-            if rest:
-                beats.append(rest)
-                pitches.append(-1)
-            else:
-                whole_note, pitch = rs.recognize_whole_note(image, staff, stats)
-                if whole_note:
-                    beats.append(whole_note)
+        if not time_signature:  # 조표가 완전히 탐색되지 않음 (아직 박자표를 찾지 못함)
+            ts, temp_key = rs.recognize_key(image, staff, stats)
+            time_signature = ts
+            key += temp_key
+            # if time_signature:
+            #     #fs.put_text(image, key, (x, y + h + fs.weighted(30)))
+        else:  # 조표가 완전히 탐색되었음
+            notes = rs.recognize_note(image, staff, stats, stems, direction)
+            if len(notes[0]):
+                for beat in notes[0]:
+                    beats.append(beat)
+                for pitch in notes[1]:
                     pitches.append(pitch)
+            else:
+                rest = rs.recognize_rest(image, staff, stats)
+                if rest:
+                    beats.append(rest)
+                    pitches.append(0)
+                else:
+                    whole_note, pitch = rs.recognize_whole_note(image, staff, stats)
+                    if whole_note:
+                        beats.append(whole_note)
+                        pitches.append(pitch)
+
 
         cv2.rectangle(image, (x, y, w, h), (255, 0, 0), 1)
-        fs.put_text(image, i, (x, y - fs.weighted(20)))
+        # fs.put_text(image, i, (x, y - fs.weighted(20)))
+        fs.put_text(image, w, (x, y))
+        fs.put_text(image, h, (x, y - fs.weighted(20)))
 
     return image, key, beats, pitches

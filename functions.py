@@ -8,7 +8,7 @@ def threshold(image):
     return image
 
 def weighted(value):
-    standard = 10
+    standard = 20
     return int(value * (standard / 10))
 
 def closing(image):

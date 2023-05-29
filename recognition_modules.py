@@ -113,7 +113,7 @@ def recognize_note_tail(image, index, stem, direction):
         area_col = x + w + fs.weighted(4)  # 음표 꼬리를 탐색할 위치 (열)
 
     cnt = fs.count_pixels_part(image, area_top, area_bot, area_col)
-
+    
     return cnt
 
 
@@ -192,11 +192,11 @@ def recognize_rest(image, staff, stats):
                 else:
                     rest = 32
                 # rest = 2
-        if recognize_rest_dot(image, stats):
-            rest *= -1
+        # if recognize_rest_dot(image, stats):
+        #     rest *= -1
         if rest:
-            fs.put_text(image, rest, (x, y + h + fs.weighted(30)))
-            fs.put_text(image, -1, (x, y + h + fs.weighted(60)))
+            fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
+            fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
 
     return rest
 
