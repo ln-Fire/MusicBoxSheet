@@ -179,7 +179,7 @@ def recognize_rest(image, staff, stats):
         if rest:
             fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
             fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
-            fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
+            # fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
     return rest
 
 # 점 쉼표
