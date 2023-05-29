@@ -2,30 +2,36 @@
 import cv2
 import numpy as np
 
+# 이미지 이진화
 def threshold(image):
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     ret, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
     return image
 
+# 정규화 가중치 설정
 def weighted(value):
     standard = 20
     return int(value * (standard / 10))
 
+# closing 연산
 def closing(image):
     kernel = np.ones((weighted(5), weighted(5)), np.uint8)
     image = cv2.morphologyEx(image, cv2.MORPH_CLOSE, kernel)
     return image
 
+# 출력 이미지에 글씨 작성
 def put_text(image, text, loc):
     font = cv2.FONT_HERSHEY_SIMPLEX
     cv2.putText(image, str(text), loc, font, 0.6, (255, 0, 0), 2)
 
+# 중심 반환
 def get_center(y, h):
     return (y + y + h) / 2
 
 VERTICAL = True
 HORIZONTAL = False
 
+# 
 def get_line(image, axis, axis_value, start, end, length):
     if axis:
         points = [(i, axis_value) for i in range(start, end)]  # 수직 탐색
@@ -43,6 +49,7 @@ def get_line(image, axis, axis_value, start, end, length):
                 pixels = 0  # 찾는 길이에 도달하기 전에 선이 끊김 (남은 범위 다시 탐색)
     return y if axis else x, pixels
 
+# 음표의 기둥 탐지
 def stem_detection(image, stats, length):
     (x, y, w, h, area) = stats
     stems = []  # 기둥 정보 (x, y, w, h)
@@ -56,6 +63,7 @@ def stem_detection(image, stats, length):
                 stems[-1][2] += 1
     return stems
 
+# 점 픽셀의 개수를 셈
 def count_rect_pixels(image, rect):
     x, y, w, h = rect
     pixels = 0
@@ -65,6 +73,7 @@ def count_rect_pixels(image, rect):
                 pixels += 1
     return pixels
 
+# 부분 픽셀의 개수를 셈
 def count_pixels_part(image, area_top, area_bot, area_col):
     cnt = 0
     flag = False
