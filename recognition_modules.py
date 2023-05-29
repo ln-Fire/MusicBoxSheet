@@ -15,7 +15,7 @@ def recognize_key(image, staves, stats):
         return True, 0
     else:  # 조표가 있을 경우 (다장조를 제외한 모든 조)
         stems = fs.stem_detection(image, stats, 20)
-        if stems[0][0] - x >= fs.weighted(3):  # 직선이 나중에 발견되면
+        if stems and stems[0][0] - x >= fs.weighted(3):  # 직선이 나중에 발견되면
             key = int(10 * len(stems) / 2)  # 샾
         else:  # 직선이 일찍 발견되면
             key = 100 * len(stems)  # 플랫

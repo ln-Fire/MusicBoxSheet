@@ -74,8 +74,23 @@ def normalization(image, staves, standard):
 #     lines = int(len(staves) / 5)  # 보표의 개수
 #     objects = []  # 구성요소 정보가 저장될 리스트
 
+
+
+
+#     # cnt, labels, stats, centroids = cv2.connectedComponentsWithStats(image)  # 모든 객체 검출하기
+#     # for i in range(1, cnt):
+#     #     (x, y, w, h, area) = stats[i]
+#     #     if w >= fs.weighted(5) and h >= fs.weighted(5):  # 악보의 구성요소가 되기 위한 넓이, 높이 조건
+#     #         center = fs.get_center(y, h)
+#     #         for line in range(lines):
+#     #             area_top = staves[line * 5] - fs.weighted(20)  # 위치 조건 (상단)
+#     #             area_bot = staves[(line + 1) * 5 - 1] + fs.weighted(20)  # 위치 조건 (하단)
+#     #             if area_top <= center <= area_bot:
+#     #                 objects.append([line, (x, y, w, h, area)])  # 객체 리스트에 보표 번호와 객체의 정보(위치, 크기)를 추가
+
 #     closing_image = fs.closing(image)
-#     cv2.imshow("closing", image)
+#     #cv2.imshow("closing", image)
+
 #     cnt, labels, stats, centroids = cv2.connectedComponentsWithStats(closing_image)  # 모든 객체 검출하기
 #     for i in range(1, cnt):
 #         (x, y, w, h, area) = stats[i]
@@ -134,10 +149,12 @@ def object_detection(image, staves):
                             and w <= fs.weighted(8)) and not (h == fs.weighted(48) and w == fs.weighted(17)) \
                             and not (h >= fs.weighted(28) and h <= fs.weighted(32) and w == fs.weighted(9)) \
                             and not (w == fs.weighted(30) and h >= fs.weighted(49) and h <= fs.weighted(50)):               
+
                         objects.append([line, (x, y, w, h, area)])  # 조표 이미 추가 했으니 추가 x
     objects.sort()  # 보표 번호 → x 좌표 순으로 오름차순 정렬
 
     return image, objects
+
 
 def object_analysis(image, objects):
     for obj in objects:
@@ -192,6 +209,7 @@ def recognition(image, staves, objects):
                     if whole_note:
                         beats.append(whole_note)
                         pitches.append(pitch)
+
 
         cv2.rectangle(image, (x, y, w, h), (255, 0, 0), 1)
         # fs.put_text(image, i, (x, y - fs.weighted(20)))
