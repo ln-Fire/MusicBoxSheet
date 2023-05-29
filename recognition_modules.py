@@ -176,10 +176,11 @@ def recognize_rest(image, staff, stats):
                 rest = 16
         if recognize_rest_dot(image, stats):
             rest += rest // 2
-        if rest:
-            fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
-            fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
-            fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
+
+        # if rest:
+        fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
+        fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
+        fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
     return rest
 
 # 점 쉼표
@@ -187,7 +188,8 @@ def recognize_rest_dot(image, stats):
     (x, y, w, h, area) = stats
     area_top = y - fs.weighted(10)  # 쉼표 점을 탐색할 위치 (상단)
     area_bot = y + fs.weighted(10)  # 쉼표 점을 탐색할 위치 (하단)
-    area_left = x + w  # 쉼표 점을 탐색할 위치 (좌측)
+    # area_left = x + w  # 쉼표 점을 탐색할 위치 (좌측)
+    area_left = x + fs.weighted(10) # 쉼표 점을 탐색할 위치 (좌측)
     area_right = x + w + fs.weighted(10)  # 쉼표 점을 탐색할 위치 (우측)
     dot_rect = (
         area_left,
