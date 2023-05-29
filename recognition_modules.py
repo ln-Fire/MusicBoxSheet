@@ -56,7 +56,7 @@ def recognize_note(image, staff, stats, stems, direction):
                     if note_classification[j][0]:
                         note = note_classification[j][1]
                         pitch = recognize_pitch(image, staff, head_center)
-                        notes.append(음표)
+                        notes.append(note)
                         pitches.append(pitch)
                         fs.put_text(image, note, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(30)))
                         fs.put_text(image, pitch, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(60)))
@@ -176,7 +176,6 @@ def recognize_rest(image, staff, stats):
                 rest = 16
         if recognize_rest_dot(image, stats):
             rest += rest // 2
-
         # if rest:
         fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
         fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력

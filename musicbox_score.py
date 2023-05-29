@@ -1,50 +1,53 @@
 import cv2
 import numpy as np
 
-all_beat = 100  # 모든 박자 수를 셈
 
-make_red = [7, 19, 27]  # 빨간줄이 들어있어야되는 배열
-musicbox_score = np.zeros((7000, (all_beat * 200) + 2400, 3), dtype="uint8") + 255
-# 앞뒤 여유공간 600씩 1200에 박자수 만큼 악보의 x길이 결정
+# 2 4 16 32 !64(반박, 한 칸)! 128(한박) 256 512 1024 2048
+def musicbox_score(pitches, beats):
+    all_beat = 0  # 모든 박자 수를 셈
 
-score_size = (all_beat * 200) + 1200  # 악보의 size만큼 가로줄의 길이 및 세로줄 개수 결정
+    for i in range(len(beats)):
+        all_beat += beats[i]
+    all_beat //= 8  # 4분음표를 한박(1)로 하려면 8로 나눠줄 필요가 있음
 
-for i in range(0, 30):  # 가로줄 생성. 도는 빨간줄 처리
-    if i in make_red:
-        cv2.line(musicbox_score, (1200, (i * 200) + 600), (score_size, (i * 200) + 600), (0, 0, 255), 6)
-    else:
-        cv2.line(musicbox_score, (1200, (i * 200) + 600), (score_size, (i * 200) + 600), (0, 0, 0), 6)
+    musicbox_score = np.zeros((1280, (all_beat * 128) + 768, 3), dtype="uint8") + 255
+    # 앞뒤 여유공간 64 * 6 = 384씩 총 768에 박자수 만큼 악보의 x길이 결정, 악보 위는 64*3 = 192 아래도 동일하게, 음표의 한 칸 넓이인 64*14해서 64*(14+3+3)인 1280
 
-make_beatline = 1600
-make_beatsubline = 1400
-cv2.line(musicbox_score, (1200, 600), (1200, 6400), (0, 0, 0), 6)  # 시작 세로선
+    score_size = (all_beat * 128)  # 악보의 size만큼 가로줄의 길이 및 세로줄 개수 결정
 
-for i in range(0, (all_beat // 2)):  # 세로줄 생성. 도는 빨간줄 처리
-    subline_helper = 750
-    cv2.line(musicbox_score, (make_beatsubline, 600), (make_beatsubline, 650), (0, 0, 0), 4)  # 맨 위 보조선
-    for i in range(1, 29):  # 중간 보조선들 생성
-        if i in make_red:
-            cv2.line(musicbox_score, (make_beatsubline, subline_helper), (make_beatsubline, subline_helper + 100), (0, 0, 255), 4)
-            subline_helper += 200
+    for i in range(0, 15):  # 가로줄 생성. 도는 빨간줄 처리
+        if i == 7:
+            cv2.line(musicbox_score, (384, (i * 64) + 192), (score_size + 384, (i * 64) + 192), (0, 0, 255), 3)
         else:
-            cv2.line(musicbox_score, (make_beatsubline, subline_helper), (make_beatsubline, subline_helper + 100), (0, 0, 0), 4)
-            subline_helper += 200
-    cv2.line(musicbox_score, (make_beatsubline, 6400), (make_beatsubline, 6350), (0, 0, 0), 4)  # 맨 아래 보조선
+            cv2.line(musicbox_score, (384, (i * 64) + 192), (score_size + 384, (i * 64) + 192), (0, 0, 0), 3)
 
-    cv2.line(musicbox_score, (make_beatline, 600), (make_beatline, 6400), (0, 0, 0), 6)  # 메인 세로선
-    make_beatline += 400
-    make_beatsubline += 400
+    make_beatline = 512
+    make_beatsubline = 448
+    cv2.line(musicbox_score, (384, 192), (384, 1088), (0, 0, 0), 3)  # 시작 세로선
 
-x = 1200
-y = 600
-for i in range(0, 3):
-    for j in range(0, 30):
-        cv2.circle(musicbox_score, (x, y), 60, (0, 0, 0), -1)
-        y += 200
-        x += 200
-    y = 600
+    for i in range(0, all_beat):  # 세로줄 생성. 도는 빨간줄 처리
+        subline_helper = 256
+        cv2.line(musicbox_score, (make_beatsubline, 192), (make_beatsubline, 192 + 16), (0, 0, 0), 2)  # 맨 위 보조선
+        for i in range(1, 14):  # 중간 보조선들 생성
+            if i == 7:
+                cv2.line(musicbox_score, (make_beatsubline, subline_helper - 16), (make_beatsubline, subline_helper + 16), (0, 0, 255), 2)
+                subline_helper += 64
+            else:
+                cv2.line(musicbox_score, (make_beatsubline, subline_helper - 16), (make_beatsubline, subline_helper + 16), (0, 0, 0), 2)
+                subline_helper += 64
+        cv2.line(musicbox_score, (make_beatsubline, 1280 - 192), (make_beatsubline, 1280 - 192 - 16), (0, 0, 0), 2)  # 맨 아래 보조선
 
-cv2.imshow('musicbox_score', musicbox_score)
-cv2.imwrite('musicbox_score.png', musicbox_score)
-if cv2.waitKey(0) == 27:
-    cv2.destroyAllWindows()
+        cv2.line(musicbox_score, (make_beatline, 192), (make_beatline, 1088), (0, 0, 0), 3)  # 메인 세로선
+        make_beatline += 128
+        make_beatsubline += 128
+
+    x = 384
+    y = 128
+    for i in range(len(pitches)):  # for i in range(len(beats)): 해도 size는 같으므로 상관 없음
+        if pitches[i] > 0:
+            y += pitches[i] * 64
+            cv2.circle(musicbox_score, (x, y), 20, (0, 0, 0), -1)
+            y = 128
+        x += beats[i] * 16
+
+    return musicbox_score
