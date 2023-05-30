@@ -44,10 +44,15 @@ def musicbox_score(pitches, beats):
     x = 384
     y = 128
     for i in range(len(pitches)):  # for i in range(len(beats)): 해도 size는 같으므로 상관 없음
+        if pitches[i] == None:
+            continue
         if pitches[i] > 0:
             y += pitches[i] * 64
             cv2.circle(musicbox_score, (x, y), 20, (0, 0, 0), -1)
             y = 128
+        
         x += beats[i] * 16
 
     return musicbox_score
+
+# music_box_sheet = musicbox_score()
