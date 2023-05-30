@@ -165,7 +165,7 @@ def recognition(image, staves, objects):
     beats = []  # 박자 리스트
     pitches = []  # 음이름 리스트
 
-    for i in range(0, len(objects)):
+    for i in range(0, len(objects) - 1):
         obj = objects[i]
         line = obj[0]
         stats = obj[1]
@@ -177,8 +177,6 @@ def recognition(image, staves, objects):
             ts, temp_key = rs.recognize_key(image, staff, stats)
             time_signature = ts
             key += temp_key
-            # if time_signature:
-            #     #fs.put_text(image, key, (x, y + h + fs.weighted(30)))
         else:  # 조표가 완전히 탐색되었음
             notes = rs.recognize_note(image, staff, stats, stems, direction)
             if len(notes[0]):

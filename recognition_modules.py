@@ -46,8 +46,8 @@ def recognize_note(image, staff, stats, stems, direction):
                     ((head_fill and tail_cnt == 0 and dot_exist), 12),  # 점 4분음표
                     ((head_fill and tail_cnt == 1 and not dot_exist), 4),   # 8분음표
                     ((head_fill and tail_cnt == 1 and dot_exist), 6),  # 점 8분음표
-                    ((head_fill and tail_cnt == 2 and not dot_exist), 2),  # 16분음표
-                    ((head_fill and tail_cnt == 2 and dot_exist), 3), # 점 16분음표
+                    ((head_fill and tail_cnt >= 2 and not dot_exist), 2),  # 16분음표
+                    ((head_fill and tail_cnt >= 2 and dot_exist), 3), # 점 16분음표
                     # ((head_fill and tail_cnt == 3 and not dot_exist), 1),   # 32분음표
                     # ((head_fill and tail_cnt == 3 and dot_exist), 1)    # 점 32분음표
                 )
@@ -162,7 +162,7 @@ def recognize_rest(image, staff, stats):
     if rest_condition:
         cnt = fs.count_pixels_part(image, y, y + h, x + fs.weighted(1))
         if fs.weighted(35) >= h >= fs.weighted(23):
-            if (cnt == 3 or cnt == 2) and (fs.weighted(13) >= w >= fs.weighted(9)): # 4분 쉼표
+            if (cnt >= 3 or cnt == 2) and (fs.weighted(13) >= w >= fs.weighted(9)): # 4분 쉼표
                 rest = 8
             elif cnt == 1 and fs.weighted(14) >= w >= fs.weighted(12):  # 16분 쉼표
                 rest = 2
@@ -176,10 +176,10 @@ def recognize_rest(image, staff, stats):
                 rest = 16
         if recognize_rest_dot(image, stats):
             rest += rest // 2
-        # if rest:
-        fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
-        fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
-        # fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
+        if rest:
+            fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
+            fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
+        fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
     return rest
 
 # 점 쉼표
