@@ -37,7 +37,6 @@ def recognize_note(image, staff, stats, stems, direction):
                         pitches.append(pitch)
                         fs.put_text(image, note, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(30)))
                         fs.put_text(image, pitch, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(60)))
-                        # fs.put_text(image, tail_cnt, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(90)))  # 꼬리 개수 찍어보기
                         break
 
     return notes, pitches
@@ -153,10 +152,10 @@ def recognize_rest(image, staff, stats):
                 rest = 16
         if recognize_rest_dot(image, stats):
             rest += rest // 2
-        # if rest:
+        
         fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
         fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
-        # fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
+        
     return rest
 
 # 점 쉼표
