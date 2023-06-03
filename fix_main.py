@@ -1,6 +1,8 @@
-# main.py
+# Main.py
 import cv2
 import os
+import numpy as np
+import functions as fs
 import modules
 import musicbox_score as ms
 
@@ -55,7 +57,12 @@ print()
 print(pitches)  # 음정
 print()
 
+# 슛돌이
+# beats_new = [8, 8, 8, 8, 4, 4, 4, 4, 16, 4, 4, 4, 4, 8, 8, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 16, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8]
+# pitches_new = [11, 0, 11, 11, 13, 13, 12, 11, 0, 13, 12, 11, 12, 13, 11, 12, 13, 14, 15, 14, 0, 11, 0, 11, 11, 13, 13, 12, 11, 0, 10, 10, 10, 11, 11, 11, 13, 11, 12, 13, 14, 15, 0, 8, 8, 8, 0, 8, 8, 8, 8, 8, 8, 10, 10, 10, 9, 8, 8, 8, 8, 7, 8, 9, 8, 7, 0, 8, 8, 8, 0, 8, 8, 8, 8, 8, 8, 10, 10, 10, 9, 8, 8, 8, 8, 7, 11, 0, 8, 0]
+
 # 오르골 악보 생성
+# music_box_sheet = ms.musicbox_score(pitches_new, beats_new)
 music_box_sheet = ms.musicbox_score(pitches, beats)
 cv2.imshow('musicbox', music_box_sheet)
 cv2.imwrite('7. 오르골 악보 생성.png', music_box_sheet)
