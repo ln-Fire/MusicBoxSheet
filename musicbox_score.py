@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 
-
-# 2 4 16 32 !64(반박, 한 칸)! 128(한박) 256 512 1024 2048
 def musicbox_score(pitches, beats):
     all_beat = 0  # 모든 박자 수를 셈
 
@@ -10,9 +8,9 @@ def musicbox_score(pitches, beats):
         all_beat += beats[i]
     all_beat //= 8  # 4분음표를 한박(1)로 하려면 8로 나눠줄 필요가 있음
 
-    musicbox_score = np.zeros((1280, (all_beat * 128) + 768, 3), dtype="uint8") + 255
     # 앞뒤 여유공간 64 * 6 = 384씩 총 768에 박자수 만큼 악보의 x길이 결정, 악보 위는 64*3 = 192 아래도 동일하게, 음표의 한 칸 넓이인 64*14해서 64*(14+3+3)인 1280
-
+    musicbox_score = np.zeros((1280, (all_beat * 128) + 768, 3), dtype="uint8") + 255
+    
     score_size = (all_beat * 128)  # 악보의 size만큼 가로줄의 길이 및 세로줄 개수 결정
 
     for i in range(0, 15):  # 가로줄 생성. 도는 빨간줄 처리
@@ -43,7 +41,7 @@ def musicbox_score(pitches, beats):
 
     x = 384
     y = 128
-    for i in range(len(pitches)):  # for i in range(len(beats)): 해도 size는 같으므로 상관 없음
+    for i in range(len(pitches)):
         if pitches[i] == None:
             continue
         if pitches[i] > 0:
@@ -54,5 +52,3 @@ def musicbox_score(pitches, beats):
         x += beats[i] * 16
 
     return musicbox_score
-
-# music_box_sheet = musicbox_score()

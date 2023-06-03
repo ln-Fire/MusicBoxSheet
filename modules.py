@@ -57,17 +57,14 @@ def normalization(image, staves, standard):
             staff_above = staves[line * 5 + staff]
             staff_below = staves[line * 5 + staff + 1]
             avg_distance += abs(staff_above - staff_below)  # 오선의 간격을 누적해서 더해줌
+            
     avg_distance /= len(staves) - lines  # 오선 간의 평균 간격
-
     height, width = image.shape  # 이미지의 높이와 넓이
     weight = standard / avg_distance  # 기준으로 정한 오선 간격을 이용해 가중치를 구함
     new_width = int(width * weight)  # 이미지의 넓이에 가중치를 곱해줌
     new_height = int(height * weight)  # 이미지의 높이에 가중치를 곱해줌
 
-    image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)  # 이미지 리사이징 - interpolation CUBIC으로 사용
-    # image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_CUBIC)  # 이미지 리사이징 - interpolation CUBIC으로 사용
-    # image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_NEAREST)  # 이미지 리사이징 - interpolation CUBIC으로 사용
-    # image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LANCZOS4)  # 이미지 리사이징 - interpolation CUBIC으로 사용
+    image = cv2.resize(image, (new_width, new_height), interpolation=cv2.INTER_LINEAR)  # 이미지 리사이징
     ret, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)  # 이미지 이진화
     staves = [x * weight for x in staves]  # 오선 좌표에도 가중치를 곱해줌
 
@@ -88,7 +85,7 @@ def object_detection(image, staves):
                 area_bot = staves[(line + 1) * 5 - 1] + fs.weighted(20)  # 위치 조건 (하단)
                 if area_top <= center <= area_bot:
                     objects.append([line, (x, y, w, h, area)])  # 객체 리스트에 보표 번호와 객체의 정보(위치, 크기)를 추가
-        # cv2.rectangle(image, (x, y, w, h), (255, 0, 0), 1)
+                    
     objects.sort()  # 보표 번호 → x 좌표 순으로 오름차순 정렬, 악보의 객체 순서대로 정렬된 결과
         
     return image, objects
@@ -128,11 +125,6 @@ def recognition(image, staves, objects):
         direction = obj[3]
         (x, y, w, h, area) = stats
         staff = staves[line * 5: (line + 1) * 5]
-        # if not time_signature:  # 조표가 완전히 탐색되지 않음 (아직 박자표를 찾지 못함)
-        #     ts, temp_key = rs.recognize_key(image, staff, stats)
-        #     time_signature = ts
-        #     key += temp_key
-        # else:  # 조표가 완전히 탐색되었음
         notes = rs.recognize_note(image, staff, stats, stems, direction)
         if len(notes[0]):
             for beat in notes[0]:
@@ -152,7 +144,5 @@ def recognition(image, staves, objects):
 
         cv2.rectangle(image, (x, y, w, h), (255, 0, 0), 1)
         fs.put_text(image, i, (x, y - fs.weighted(20)))
-        # fs.put_text(image, w, (x, y))
-        # fs.put_text(image, h, (x, y - fs.weighted(20)))
 
-    return image, key, beats, pitches
+    return image, beats, pitches
