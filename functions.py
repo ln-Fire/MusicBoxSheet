@@ -31,7 +31,6 @@ def get_center(y, h):
 VERTICAL = True
 HORIZONTAL = False
 
-# 
 def get_line(image, axis, axis_value, start, end, length):
     if axis:
         points = [(i, axis_value) for i in range(start, end)]  # 수직 탐색

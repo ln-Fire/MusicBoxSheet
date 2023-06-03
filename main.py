@@ -8,7 +8,7 @@ import musicbox_score as ms
 
 # 이미지 불러오기
 resource_path = os.getcwd()
-image_0 = cv2.imread(resource_path + "/test/soccer.png")
+image_0 = cv2.imread(resource_path + "/test/little_star.png")
 cv2.imshow('input image', image_0)
 cv2.imwrite('0. 디지털 악보.png', image_0)
 
@@ -50,7 +50,11 @@ print()
 image_6, key, beats, pitches = modules.recognition(image_5, staves, objects)
 cv2.imshow('object recognition', image_6)
 cv2.imwrite('6. 악보 안의 객체 인식.png', image_6)
-print(key)  # 조표
+
+# 슛돌이
+# beats_new = [8, 8, 8, 8, 4, 4, 4, 4, 16, 4, 4, 4, 4, 8, 8, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 16, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 4, 4, 4, 4, 8, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8]
+# pitches_new = [11, 0, 11, 11, 13, 13, 12, 11, 0, 13, 12, 11, 12, 13, 11, 12, 13, 14, 15, 14, 0, 11, 0, 11, 11, 13, 13, 12, 11, 0, 10, 10, 10, 11, 11, 11, 13, 11, 12, 13, 14, 15, 0, 8, 8, 8, 0, 8, 8, 8, 8, 8, 8, 10, 10, 10, 9, 8, 8, 8, 8, 7, 8, 9, 8, 7, 0, 8, 8, 8, 0, 8, 8, 8, 8, 8, 8, 10, 10, 10, 9, 8, 8, 8, 8, 7, 11, 0, 8, 0]
+
 print()
 print(beats)    # 박자
 print()
@@ -58,6 +62,7 @@ print(pitches)  # 음정
 print()
 
 # 오르골 악보 생성
+# music_box_sheet = ms.musicbox_score(pitches_new, beats_new)
 music_box_sheet = ms.musicbox_score(pitches, beats)
 cv2.imshow('musicbox', music_box_sheet)
 cv2.imwrite('7. 오르골 악보 생성.png', music_box_sheet)
