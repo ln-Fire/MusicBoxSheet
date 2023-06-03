@@ -48,8 +48,6 @@ def recognize_note(image, staff, stats, stems, direction):
                     ((head_fill and tail_cnt == 1 and dot_exist), 6),  # 점 8분음표
                     ((head_fill and tail_cnt >= 2 and not dot_exist), 2),  # 16분음표
                     ((head_fill and tail_cnt >= 2 and dot_exist), 3), # 점 16분음표
-                    # ((head_fill and tail_cnt == 3 and not dot_exist), 1),   # 32분음표
-                    # ((head_fill and tail_cnt == 3 and dot_exist), 1)    # 점 32분음표
                 )
 
                 for j in range(len(note_classification)):
@@ -60,7 +58,7 @@ def recognize_note(image, staff, stats, stems, direction):
                         pitches.append(pitch)
                         fs.put_text(image, note, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(30)))
                         fs.put_text(image, pitch, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(60)))
-                        fs.put_text(image, tail_cnt, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(90)))  # 꼬리 개수 찍어보기
+                        # fs.put_text(image, tail_cnt, (stem[0] - fs.weighted(10), stem[1] + stem[3] + fs.weighted(90)))  # 꼬리 개수 찍어보기
                         break
 
     return notes, pitches
@@ -138,7 +136,7 @@ def recognize_note_dot(image, stem, direction, tail_cnt, stems_cnt):
 
     pixels = fs.count_rect_pixels(image, dot_rect)
 
-    threshold = (10, 15, 20, 30, 35, 40)
+    threshold = (15, 25, 35, 40)
     if direction and stems_cnt == 1:
         return pixels >= fs.weighted(threshold[tail_cnt])
     else:
@@ -176,10 +174,10 @@ def recognize_rest(image, staff, stats):
                 rest = 16
         if recognize_rest_dot(image, stats):
             rest += rest // 2
-        if rest:
-            fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
-            fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
-        fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
+        # if rest:
+        fs.put_text(image, rest, (x, y + h + fs.weighted(30)))  # 이미지에 박자 출력
+        fs.put_text(image, 0, (x, y + h + fs.weighted(60))) # 이미지에 음정 출력
+        # fs.put_text(image, cnt, (x, y + h + fs.weighted(90))) # 이미지에 꼬리 개수 출력
     return rest
 
 # 점 쉼표
@@ -220,7 +218,7 @@ def recognize_whole_note(image, staff, stats):
         whole_note = 48 if pixels >= fs.weighted(8) else 32    # 점 온음표 박자
         pitch = recognize_pitch(image, staff, fs.get_center(y, h))
 
-        fs.put_text(image, whole_note, (x, y + h + fs.weighted(30)))
-        fs.put_text(image, pitch, (x, y + h + fs.weighted(60)))
+        # fs.put_text(image, whole_note, (x, y + h + fs.weighted(30)))
+        # fs.put_text(image, pitch, (x, y + h + fs.weighted(60)))
 
     return whole_note, pitch
