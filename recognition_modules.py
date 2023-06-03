@@ -164,7 +164,6 @@ def recognize_rest_dot(image, stats):
     area_top = y - fs.weighted(10)  # 쉼표 점을 탐색할 위치 (상단)
     area_bot = y + fs.weighted(10)  # 쉼표 점을 탐색할 위치 (하단)
     area_left = x + w  # 쉼표 점을 탐색할 위치 (좌측)
-    # area_left = x + fs.weighted(10) # 쉼표 점을 탐색할 위치 (좌측)
     area_right = x + w + fs.weighted(10)  # 쉼표 점을 탐색할 위치 (우측)
     dot_rect = (
         area_left,
